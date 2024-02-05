@@ -3,7 +3,6 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using AForge.Video;
 using Accord.Video.FFMPEG;
 using System.Diagnostics;
 
@@ -19,7 +18,7 @@ namespace VideoFrameExtractor
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Video Files|*.mp4;*.avi;*.mov;*.wmv|All Files|*.*";
+            openFileDialog.Filter = "Video Files|*.mp4;*.avi;*.mov;*.wmv;";
             openFileDialog.Title = "Select a Video File";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -47,8 +46,9 @@ namespace VideoFrameExtractor
             using (var video = new VideoFileReader())
             {
                 video.Open(videoFilePath);
+                var fc = video.FrameCount;
 
-                for (int i = 0; i < video.FrameCount; i++)
+                for (int i = 0; i < fc; i++)
                 {
                     var frame = video.ReadVideoFrame(i);
                     if (frame != null)
@@ -71,6 +71,7 @@ namespace VideoFrameExtractor
                         frame.Save(frameFileName, ImageFormat.Jpeg);
                         frame.Dispose();
                     }
+                    pbProgress.Value = ((i + 1) * 100) / (int)fc;
                 }
             }
             Process.Start("explorer.exe", framesCategoryPath);
@@ -104,6 +105,24 @@ namespace VideoFrameExtractor
             }
 
             return true;
+        }
+
+        private void tb_TextChanged(object sender, EventArgs e)
+        {
+            var isEmpty = !string.IsNullOrWhiteSpace(tbCategoryFilePath.Text) && !string.IsNullOrWhiteSpace(tbVideoPath.Text);
+            bool isVideo;
+            if (tbVideoPath.Text.Length >= 3)
+            {
+                isVideo = tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "mp4" ||
+                        tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "avi" ||
+                        tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "mov" ||
+                        tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "wmv"; 
+            }
+            else
+            {
+                isVideo = false;
+            }
+            btnExport.Enabled = isVideo && isEmpty && File.Exists(tbVideoPath.Text);
         }
     }
 }
