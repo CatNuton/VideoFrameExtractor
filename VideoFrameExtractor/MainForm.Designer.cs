@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tbVideoPath = new System.Windows.Forms.TextBox();
             this.btnOpenVideo = new System.Windows.Forms.Button();
             this.lblVFP = new System.Windows.Forms.Label();
@@ -126,6 +127,7 @@
             this.Controls.Add(this.lblVFP);
             this.Controls.Add(this.btnOpenVideo);
             this.Controls.Add(this.tbVideoPath);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Video Frame Extractor";
             this.ResumeLayout(false);
