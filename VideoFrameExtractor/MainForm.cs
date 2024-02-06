@@ -47,27 +47,12 @@ namespace VideoFrameExtractor
             {
                 video.Open(videoFilePath);
                 var fc = video.FrameCount;
-
                 for (int i = 0; i < fc; i++)
                 {
                     var frame = video.ReadVideoFrame(i);
                     if (frame != null)
                     {
                         var frameFileName = Path.Combine(framesCategoryPath, $"frame_{i}.jpg");
-                        if (cbDelete.Checked)
-                        {
-                            if (i > 0 && File.Exists(Path.Combine(framesCategoryPath, $"frame_{i - 1}.jpg")))
-                            {
-                                var previousFrame = new Bitmap(Path.Combine(framesCategoryPath, $"frame_{i - 1}.jpg"));
-                                if (IsDuplicateFrame(frame, previousFrame))
-                                {
-                                    frame.Dispose();
-                                    previousFrame.Dispose();
-                                    continue;
-                                }
-                                previousFrame.Dispose();
-                            }
-                        }
                         frame.Save(frameFileName, ImageFormat.Jpeg);
                         frame.Dispose();
                     }
@@ -78,33 +63,12 @@ namespace VideoFrameExtractor
             MessageBox.Show("Frames extracted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-
         private void btnSearchCategory_Click(object sender, EventArgs e)
         {
             if (fbdFramesCtegory.ShowDialog() == DialogResult.OK)
             {
                 tbCategoryFilePath.Text = fbdFramesCtegory.SelectedPath;
             }
-        }
-
-        bool IsDuplicateFrame(Bitmap frame1, Bitmap frame2)
-        {
-            if (frame2 == null)
-                return false;
-
-            if (frame1.Width != frame2.Width || frame1.Height != frame2.Height)
-                return false;
-
-            for (int x = 0; x < frame1.Width; x++)
-            {
-                for (int y = 0; y < frame1.Height; y++)
-                {
-                    if (frame1.GetPixel(x, y) != frame2.GetPixel(x, y))
-                        return false;
-                }
-            }
-
-            return true;
         }
 
         private void tb_TextChanged(object sender, EventArgs e)
@@ -116,7 +80,7 @@ namespace VideoFrameExtractor
                 isVideo = tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "mp4" ||
                         tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "avi" ||
                         tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "mov" ||
-                        tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "wmv"; 
+                        tbVideoPath.Text.Substring(tbVideoPath.Text.Length - 3) == "wmv";
             }
             else
             {
